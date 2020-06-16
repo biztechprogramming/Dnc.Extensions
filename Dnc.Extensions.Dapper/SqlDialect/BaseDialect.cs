@@ -41,7 +41,7 @@ namespace Dnc.Extensions.Dapper.SqlDialect
         {
             var tableName = FormatTableName<TEntity>();
             var columns = string.Join(",", fields.Select(p => QuoteStart + p + QuoteEnd));
-            var values = string.Join(",", fields.Select(p => "@" + p));
+            var values = string.Join(",", fields.Select(p => ParameterPrefix + p));
             var sql = $"INSERT INTO {tableName} ({columns}) values ({values})";
             return sql;
         }
@@ -60,11 +60,11 @@ namespace Dnc.Extensions.Dapper.SqlDialect
 
         public virtual string FormatUpdateSql(string formatTableName, List<string> updateFields, List<string> whereFields, string wherePrefix)
         {
-            var columns = string.Join(",", updateFields.Select(p => QuoteStart + p + QuoteEnd + "=@" + p));
+            var columns = string.Join(",", updateFields.Select(p => QuoteStart + p + QuoteEnd + "=" + ParameterPrefix + p));
             var where = "";
             if (whereFields.Any())
             {
-                where = " WHERE " + string.Join(" AND ", whereFields.Select(p => QuoteStart + p + QuoteEnd + "=@" + wherePrefix + p));
+                where = " WHERE " + string.Join(" AND ", whereFields.Select(p => QuoteStart + p + QuoteEnd + "=" + ParameterPrefix + wherePrefix + p));
             }
             return $"UPDATE {formatTableName} SET {columns}{where}";
         }
@@ -92,7 +92,7 @@ namespace Dnc.Extensions.Dapper.SqlDialect
             var where = "";
             if (whereFields != null && whereFields.Any())
             {
-                where = "WHERE " + string.Join(" AND ", whereFields.Select(p => QuoteField(p) + "=@" + p));
+                where = "WHERE " + string.Join(" AND ", whereFields.Select(p => QuoteField(p) + "=" + ParameterPrefix + p));
             }
             else if (!string.IsNullOrEmpty(whereSql))
             {
@@ -103,7 +103,7 @@ namespace Dnc.Extensions.Dapper.SqlDialect
                 where = "WHERE 1<>1 ";
             }
 
-            return $"UPDATE {FormatTableName<TEntity>()} SET {QuoteField(field)}=@{field} {where}";
+            return $"UPDATE {FormatTableName<TEntity>()} SET {QuoteField(field)}={ParameterPrefix}{field} {where}";
         }
 
         public virtual string FormatDeleteSql<TEntity>(List<string> whereFields, string whereSql) where TEntity : class
@@ -111,7 +111,7 @@ namespace Dnc.Extensions.Dapper.SqlDialect
             var where = "WHERE 1<>1 ";
             if (whereFields != null && whereFields.Any())
             {
-                where = "WHERE " + string.Join(" AND ", whereFields.Select(p => QuoteField(p) + "=@" + p));
+                where = "WHERE " + string.Join(" AND ", whereFields.Select(p => QuoteField(p) + "=" + ParameterPrefix + p));
             } else if (!string.IsNullOrEmpty(whereSql))
             {
                 where = "WHERE " + whereSql;
@@ -135,7 +135,7 @@ namespace Dnc.Extensions.Dapper.SqlDialect
             var sql = new StringBuilder(" WHERE ");
             if (whereFields != null && whereFields.Any())
             {
-                sql.Append(string.Join(" AND ", whereFields.Select(p => QuoteField(p) + "=@" + p)));
+                sql.Append(string.Join(" AND ", whereFields.Select(p => QuoteField(p) + "=" + ParameterPrefix + p)));
                 if (!string.IsNullOrEmpty(whereSql))
                 {
                     sql.Append(" AND ");

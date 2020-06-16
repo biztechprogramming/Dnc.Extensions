@@ -46,7 +46,7 @@ namespace Dnc.Extensions.Dapper
             Timeout = _options.Timeout;
         }
 
-        #region 事务
+        #region Transaction
 
         public ITransation BeginTrans()
         {
@@ -86,7 +86,7 @@ namespace Dnc.Extensions.Dapper
 
         #endregion
 
-        #region 更新数据
+        #region Update Data
 
         public int Update<TEntity>(dynamic data, dynamic where = null) where TEntity : class
         {
@@ -162,7 +162,7 @@ namespace Dnc.Extensions.Dapper
 
         #endregion
 
-        #region 删除&逻辑删除
+        #region Delete Data
 
         public int Delete<TEntity>(dynamic where) where TEntity : class
         {
@@ -233,7 +233,7 @@ namespace Dnc.Extensions.Dapper
 
         #endregion
 
-        #region 逻辑恢复
+        #region Logical Recovery
 
         public int Restore<TEntity>(dynamic where) where TEntity : class
         {
@@ -265,7 +265,7 @@ namespace Dnc.Extensions.Dapper
             var attr = type.GetCustomAttribute<LogicalDeleteAttribute>(true);
             if (attr == null)
             {
-                throw new DapperException("该对象不支持逻辑恢复操作！");
+                throw new DapperException("The object does not support logical recovery operations.");
             }
 
             DynamicParameters parameters;

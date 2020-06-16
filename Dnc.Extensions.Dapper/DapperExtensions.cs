@@ -25,6 +25,14 @@ namespace Microsoft.Extensions.DependencyInjection
             options.Timeout = null;
             return options;
         }
+        public static DapperOptions UseOracle(this DapperOptions options, string connectionString, int? timeout = null)
+        {
+            options.DbType = DbType.Oracle;
+            options.SqlDialect = new OracleSqlDialect();
+            options.DbConnection = () => new Oracle.ManagedDataAccess.Client.OracleConnection(connectionString);
+            options.Timeout = null;
+            return options;
+        }
     }
 }
 

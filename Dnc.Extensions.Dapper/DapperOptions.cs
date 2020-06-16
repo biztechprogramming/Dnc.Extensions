@@ -18,6 +18,7 @@ namespace Dnc.Extensions.Dapper
     public enum DbType
     {
         SqlServer,
-        MySql
+        MySql,
+        Oracle
     }
 }
